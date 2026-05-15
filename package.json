@@ -1,0 +1,54 @@
+{
+  "name": "json-react-pdf",
+  "version": "0.1.0",
+  "description": "Generate PDFs from a JSON document schema and dynamic data using @react-pdf/renderer",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "src"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": [
+    "pdf",
+    "react-pdf",
+    "json",
+    "template",
+    "pdf-generation",
+    "document"
+  ],
+  "author": "Vlad <vlad@deravesoftware.com>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/vladninja/json-react-pdf"
+  },
+  "homepage": "https://github.com/vladninja/json-react-pdf#readme",
+  "bugs": "https://github.com/vladninja/json-react-pdf/issues",
+  "peerDependencies": {
+    "react": ">=18",
+    "@react-pdf/renderer": ">=4"
+  },
+  "dependencies": {
+    "lodash.get": "^4.4.2"
+  },
+  "devDependencies": {
+    "@types/lodash.get": "^4.4.9",
+    "@types/react": "^19.0.0",
+    "@react-pdf/renderer": "^4.5.1",
+    "react": "^19.2.6",
+    "tsup": "^8.0.0",
+    "typescript": "^5.0.0"
+  }
+}
