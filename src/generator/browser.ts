@@ -5,7 +5,7 @@ import { registerFontsFromSchema } from './fonts';
 
 export async function generatePdfBlobUrl(
   schema: DocumentSchema,
-  data: Record<string, any>,
+  data: Record<string, unknown>,
   headerSchemas?: Record<string, DocumentSchema>,
   footerSchemas?: Record<string, DocumentSchema>,
   loopSchemas?: Record<string, DocumentSchema>,

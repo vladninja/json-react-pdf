@@ -1,3 +1,4 @@
+import { Style } from '@react-pdf/types';
 import React from 'react';
 
 type LayoutType = 'A4' | 'A5' | 'LETTER' | 'LEGAL';
@@ -43,7 +44,7 @@ type NodeType = 'text' | 'view' | 'image' | 'repeater' | 'background-image';
 interface BaseNode {
     id: string;
     type: NodeType;
-    style?: Record<string, any>;
+    style?: Style;
     fixed?: boolean;
     wrap?: boolean;
 }
@@ -82,7 +83,7 @@ declare const sampleInvoiceLoopSchema: DocumentSchema;
  * @param context The data object to resolve variables against
  * @returns The interpolated string
  */
-declare function interpolate(template: string, context: Record<string, any>): string;
+declare function interpolate(template: string, context: Record<string, unknown>): string;
 
 /**
  * Evaluates whether a condition is true against the context data.
@@ -92,37 +93,31 @@ declare function interpolate(template: string, context: Record<string, any>): st
  */
 declare function evaluateCondition(condition: string | undefined, context: Record<string, any>): boolean;
 
-declare function resolveRepeaterItems(node: RepeaterNode, context: Record<string, any>): any[];
+declare function resolveRepeaterItems(node: RepeaterNode, context: Record<string, unknown>): unknown[];
 
 interface PDFDocumentProps {
     schema: DocumentSchema;
-    data: Record<string, any>;
+    data: Record<string, unknown>;
     headerSchemas?: Record<string, DocumentSchema>;
     footerSchemas?: Record<string, DocumentSchema>;
     loopSchemas?: Record<string, DocumentSchema>;
 }
 declare const PDFDocument: React.FC<PDFDocumentProps>;
-declare function createPdfElement(schema: DocumentSchema, data: Record<string, any>, headerSchemas?: Record<string, DocumentSchema>, footerSchemas?: Record<string, DocumentSchema>, loopSchemas?: Record<string, DocumentSchema>): React.ReactElement<any>;
+declare function createPdfElement(schema: DocumentSchema, data: Record<string, unknown>, headerSchemas?: Record<string, DocumentSchema>, footerSchemas?: Record<string, DocumentSchema>, loopSchemas?: Record<string, DocumentSchema>): React.ReactElement<any>;
 
 interface RenderContext {
-    data: Record<string, any>;
+    data: Record<string, unknown>;
     loopSchemas?: Record<string, DocumentSchema>;
 }
 declare function renderNode(node: NodeSchema, context: RenderContext): React.ReactNode;
 
-declare function generatePdfBlobUrl(schema: DocumentSchema, data: Record<string, any>, headerSchemas?: Record<string, DocumentSchema>, footerSchemas?: Record<string, DocumentSchema>, loopSchemas?: Record<string, DocumentSchema>): Promise<string>;
+declare function generatePdfBlobUrl(schema: DocumentSchema, data: Record<string, unknown>, headerSchemas?: Record<string, DocumentSchema>, footerSchemas?: Record<string, DocumentSchema>, loopSchemas?: Record<string, DocumentSchema>): Promise<string>;
 
 declare function generatePdfStream(schema: DocumentSchema, data: Record<string, any>, headerSchemas?: Record<string, DocumentSchema>, footerSchemas?: Record<string, DocumentSchema>, loopSchemas?: Record<string, DocumentSchema>): Promise<NodeJS.ReadableStream>;
 declare function generatePdfBuffer(schema: DocumentSchema, data: Record<string, any>, headerSchemas?: Record<string, DocumentSchema>, footerSchemas?: Record<string, DocumentSchema>, loopSchemas?: Record<string, DocumentSchema>): Promise<Buffer>;
 declare function generatePdfFile(filePath: string, schema: DocumentSchema, data: Record<string, any>, headerSchemas?: Record<string, DocumentSchema>, footerSchemas?: Record<string, DocumentSchema>, loopSchemas?: Record<string, DocumentSchema>): Promise<void>;
 
-/**
- * Registers a Google Font with @react-pdf/renderer using local metadata.
- */
 declare function registerFont(family: string): void;
-/**
- * Scans a schema and registers all fonts used in it.
- */
-declare function registerFontsFromSchema(schema: any): void;
+declare function registerFontsFromSchema(schema: DocumentSchema): void;
 
 export { type BackgroundImageNode, type BaseNode, type DocumentSchema, type DocumentSettings, type ImageNode, type ItemKind, type LayoutType, type NodeSchema, type NodeType, PDFDocument, type PDFDocumentProps, type PageMode, type PageSchema, type PageSettings, type RenderContext, type RepeaterNode, type TextNode, type ViewNode, createPdfElement, evaluateCondition, generatePdfBlobUrl, generatePdfBuffer, generatePdfFile, generatePdfStream, interpolate, registerFont, registerFontsFromSchema, renderNode, resolveRepeaterItems, sampleInvoiceLoopSchema, sampleInvoiceSchema };

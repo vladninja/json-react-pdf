@@ -92,24 +92,103 @@ Missing paths are left as-is: `{{missing.key}}`.
 
 ## Repeater
 
-Iterate over an array to render repeated blocks:
+The repeater iterates over an array and renders a row template for each item. Like headers and footers, the row template lives in a separate `DocumentSchema` of `kind: 'loop'` and is referenced by ID.
 
-```json
-{
-  "type": "repeater",
-  "dataKey": "items",
-  "itemAs": "item",
-  "indexAs": "i",
-  "loopId": "line-item-loop-schema-id"
-}
+### 1. Define the row template schema (`kind: 'loop'`)
+
+```ts
+const lineItemSchema: DocumentSchema = {
+  id: 'invoice-line-item-loop',
+  name: 'Invoice Line Item',
+  layout: 'A4',
+  kind: 'loop',
+  updatedAt: Date.now(),
+  pages: [
+    {
+      id: 'loop-page',
+      type: 'dynamic',
+      settings: {},
+      children: [
+        {
+          id: 'item-row',
+          type: 'view',
+          style: { flexDirection: 'row', justifyContent: 'space-between', borderBottomWidth: 1, borderBottomColor: '#eee', paddingVertical: 8 },
+          children: [
+            { id: 'item-index',    type: 'text', content: '{{i}}.' },
+            { id: 'item-name',     type: 'text', content: '{{item.name}}' },
+            { id: 'item-quantity', type: 'text', content: '{{item.qty}} x' },
+            { id: 'item-price',    type: 'text', content: '${{item.price}}' },
+          ],
+        },
+      ],
+    },
+  ],
+};
 ```
 
-- `dataKey` — dot-path to the array in your data
-- `itemAs` — name to bind each item to inside the loop
-- `indexAs` — name to bind the index to inside the loop
-- `loopId` — (optional) ID of a separate `DocumentSchema` of `kind: 'loop'` whose `pages[0].children` are used as the row template
+- `{{item.*}}` — fields of the current array element (bound via `itemAs`)
+- `{{i}}` — zero-based index of the current element (bound via `indexAs`)
 
-Within the loop schema, use `{{item.fieldName}}` and `{{i}}` for the current row.
+### 2. Place a repeater node in the template
+
+```ts
+const invoiceSchema: DocumentSchema = {
+  id: 'invoice-template',
+  kind: 'template',
+  // ...
+  pages: [
+    {
+      id: 'page-1',
+      type: 'dynamic',
+      headerId: 'invoice-header',   // optional
+      footerId: 'invoice-footer',   // optional
+      settings: { padding: 40 },
+      children: [
+        { id: 'title', type: 'text', content: 'Invoice #{{invoice.number}}', style: { fontSize: 20 } },
+        {
+          id: 'items-repeater',
+          type: 'repeater',
+          dataKey: 'items',               // dot-path to the array in data
+          itemAs: 'item',                 // name for each element inside the loop
+          indexAs: 'i',                   // name for the index inside the loop
+          loopId: 'invoice-line-item-loop', // matches lineItemSchema.id
+        },
+        { id: 'total', type: 'text', content: 'Total: ${{total}}', style: { fontWeight: 'bold' } },
+      ],
+    },
+  ],
+};
+```
+
+### 3. Pass the loop schema alongside headers and footers
+
+```ts
+const data = {
+  invoice: { number: '2024-001' },
+  items: [
+    { name: 'Design work', qty: 3, price: 150 },
+    { name: 'Hosting',     qty: 1, price: 20  },
+  ],
+  total: 470,
+};
+
+const url = await generatePdfBlobUrl(
+  invoiceSchema,
+  data,
+  { [headerSchema.id]: headerSchema },   // headerSchemas (optional)
+  { [footerSchema.id]: footerSchema },   // footerSchemas (optional)
+  { [lineItemSchema.id]: lineItemSchema }, // loopSchemas
+);
+```
+
+### Repeater node fields
+
+| Field | Type | Description |
+|---|---|---|
+| `dataKey` | `string` | Dot-path to the array in your data |
+| `itemAs` | `string` | Variable name bound to each element inside the loop template |
+| `indexAs` | `string` | Variable name bound to the element index inside the loop template |
+| `loopId` | `string` | ID of the `kind: 'loop'` schema whose `pages[0].children` are the row template |
 
 ## Headers and footers
 

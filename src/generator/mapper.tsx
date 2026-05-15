@@ -1,14 +1,16 @@
 import React from 'react';
 import { Text, View, Image } from '@react-pdf/renderer';
+import type { Style } from '@react-pdf/types';
 import type { DocumentSchema, NodeSchema } from '../schema/types';
 import { interpolate } from '../data-binding/interpolator';
-
 import { resolveRepeaterItems } from '../data-binding/repeater';
 
 export interface RenderContext {
-  data: Record<string, any>;
+  data: Record<string, unknown>;
   loopSchemas?: Record<string, DocumentSchema>;
 }
+
+type CommonNodeProps = { style: Style; fixed?: boolean; wrap?: boolean };
 
 export function renderNode(node: NodeSchema, context: RenderContext): React.ReactNode {
 
@@ -31,9 +33,7 @@ export function renderNode(node: NodeSchema, context: RenderContext): React.Reac
     });
   }
 
-  const commonProps: Record<string, any> = {
-    style: node.style || {},
-  };
+  const commonProps: CommonNodeProps = { style: node.style ?? ({} as Style) };
   if (node.fixed !== undefined) commonProps.fixed = node.fixed;
   if (node.wrap !== undefined) commonProps.wrap = node.wrap;
 
@@ -72,7 +72,7 @@ export function renderNode(node: NodeSchema, context: RenderContext): React.Reac
   }
 
   if (node.type === 'background-image') {
-    const { objectFit, objectPosition, ...containerStyle } = node.style || {};
+    const { objectFit, objectPosition, ...containerStyle } = node.style ?? ({} as Style);
     return (
       <View key={node.id} style={containerStyle} fixed={node.fixed} {...(node.wrap !== undefined && { wrap: node.wrap })}>
         <Image
@@ -81,7 +81,7 @@ export function renderNode(node: NodeSchema, context: RenderContext): React.Reac
             position: 'absolute',
             top: 0, left: 0, right: 0, bottom: 0,
             width: '100%', height: '100%',
-            objectFit: objectFit || 'cover',
+            objectFit: objectFit ?? 'cover',
             objectPosition,
           }}
         />

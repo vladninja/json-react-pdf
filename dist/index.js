@@ -256,7 +256,7 @@ var import_renderer2 = require("@react-pdf/renderer");
 var import_react = __toESM(require("react"));
 var import_renderer = require("@react-pdf/renderer");
 function renderNode(node, context) {
-  var _a, _b, _c, _d;
+  var _a, _b, _c, _d, _e, _f;
   if (node.type === "repeater") {
     const items = resolveRepeaterItems(node, context.data);
     const loopChildren = node.loopId ? (_d = (_c = (_b = (_a = context.loopSchemas) == null ? void 0 : _a[node.loopId]) == null ? void 0 : _b.pages[0]) == null ? void 0 : _c.children) != null ? _d : [] : null;
@@ -268,9 +268,7 @@ function renderNode(node, context) {
       return /* @__PURE__ */ import_react.default.createElement(import_react.default.Fragment, { key: `${node.id}-${index}` }, loopChildren == null ? void 0 : loopChildren.map((child) => renderNode(child, scopedContext)));
     });
   }
-  const commonProps = {
-    style: node.style || {}
-  };
+  const commonProps = { style: (_e = node.style) != null ? _e : {} };
   if (node.fixed !== void 0) commonProps.fixed = node.fixed;
   if (node.wrap !== void 0) commonProps.wrap = node.wrap;
   if (node.type === "text") {
@@ -294,7 +292,7 @@ function renderNode(node, context) {
     return /* @__PURE__ */ import_react.default.createElement(import_renderer.View, { key: node.id, ...commonProps }, node.children.map((child) => renderNode(child, context)));
   }
   if (node.type === "background-image") {
-    const { objectFit, objectPosition, ...containerStyle } = node.style || {};
+    const { objectFit, objectPosition, ...containerStyle } = (_f = node.style) != null ? _f : {};
     return /* @__PURE__ */ import_react.default.createElement(import_renderer.View, { key: node.id, style: containerStyle, fixed: node.fixed, ...node.wrap !== void 0 && { wrap: node.wrap } }, /* @__PURE__ */ import_react.default.createElement(
       import_renderer.Image,
       {
@@ -307,7 +305,7 @@ function renderNode(node, context) {
           bottom: 0,
           width: "100%",
           height: "100%",
-          objectFit: objectFit || "cover",
+          objectFit: objectFit != null ? objectFit : "cover",
           objectPosition
         }
       }
@@ -317,6 +315,11 @@ function renderNode(node, context) {
 }
 
 // src/generator/document.tsx
+function resolvePadding(p) {
+  if (p === void 0) return void 0;
+  if (typeof p === "number") return p;
+  return p.join(" ");
+}
 var PDFDocument = ({ schema, data, headerSchemas, footerSchemas, loopSchemas }) => {
   var _a, _b, _c, _d;
   const context = { data, loopSchemas };
@@ -329,7 +332,7 @@ var PDFDocument = ({ schema, data, headerSchemas, footerSchemas, loopSchemas }) 
       userPassword: (_d = schema.settings) == null ? void 0 : _d.userPassword
     },
     schema.pages.map((page) => {
-      var _a2, _b2, _c2, _d2, _e, _f;
+      var _a2, _b2, _c2, _d2, _e, _f, _g, _h, _i, _j;
       const isStatic = page.type === "static";
       const headerSchema = page.headerId ? headerSchemas == null ? void 0 : headerSchemas[page.headerId] : void 0;
       const footerSchema = page.footerId ? footerSchemas == null ? void 0 : footerSchemas[page.footerId] : void 0;
@@ -340,17 +343,17 @@ var PDFDocument = ({ schema, data, headerSchemas, footerSchemas, loopSchemas }) 
           size: page.settings.format || schema.layout,
           orientation: page.settings.orientation || ((_a2 = schema.settings) == null ? void 0 : _a2.orientation) || "portrait",
           style: {
-            padding: page.settings.padding,
+            padding: resolvePadding(page.settings.padding),
             backgroundColor: page.settings.backgroundColor,
-            fontFamily: page.settings.fontFamily || ((_b2 = schema.settings) == null ? void 0 : _b2.fontFamily),
-            fontSize: page.settings.fontSize || ((_c2 = schema.settings) == null ? void 0 : _c2.fontSize),
-            color: page.settings.color || ((_d2 = schema.settings) == null ? void 0 : _d2.color) || "#000"
+            fontFamily: (_c2 = page.settings.fontFamily) != null ? _c2 : (_b2 = schema.settings) == null ? void 0 : _b2.fontFamily,
+            fontSize: (_e = page.settings.fontSize) != null ? _e : (_d2 = schema.settings) == null ? void 0 : _d2.fontSize,
+            color: (_h = (_g = page.settings.color) != null ? _g : (_f = schema.settings) == null ? void 0 : _f.color) != null ? _h : "#000"
           },
           wrap: !isStatic
         },
-        headerSchema && /* @__PURE__ */ import_react2.default.createElement(import_renderer2.View, { fixed: true }, (_e = headerSchema.pages[0]) == null ? void 0 : _e.children.map((child) => renderNode(child, context))),
+        headerSchema && /* @__PURE__ */ import_react2.default.createElement(import_renderer2.View, { fixed: true }, (_i = headerSchema.pages[0]) == null ? void 0 : _i.children.map((child) => renderNode(child, context))),
         page.children.map((child) => renderNode(child, context)),
-        footerSchema && /* @__PURE__ */ import_react2.default.createElement(import_renderer2.View, { fixed: true, style: { marginTop: "auto" } }, (_f = footerSchema.pages[0]) == null ? void 0 : _f.children.map((child) => renderNode(child, context)))
+        footerSchema && /* @__PURE__ */ import_react2.default.createElement(import_renderer2.View, { fixed: true, style: { marginTop: "auto" } }, (_j = footerSchema.pages[0]) == null ? void 0 : _j.children.map((child) => renderNode(child, context)))
       );
     })
   );
@@ -371,15 +374,12 @@ import_google_fonts.default.items.forEach((item) => {
 });
 var registeredFonts = /* @__PURE__ */ new Set();
 function registerFont(family) {
+  var _a;
   if (!family || family === "") return;
-  const sanitizedFamily = family.replace(/['"]/g, "").split(",")[0].trim();
-  if (registeredFonts.has(sanitizedFamily)) {
-    return;
-  }
+  const sanitizedFamily = ((_a = family.replace(/['"]/g, "").split(",")[0]) != null ? _a : family).trim();
+  if (registeredFonts.has(sanitizedFamily)) return;
   const metadata = FONT_METADATA.get(sanitizedFamily.toLowerCase());
-  if (!metadata) {
-    return;
-  }
+  if (!metadata) return;
   const sources = [];
   Object.entries(metadata.files).forEach(([variant, url]) => {
     let fontWeight = 400;
@@ -388,11 +388,7 @@ function registerFont(family) {
     else if (!isNaN(parseInt(variant))) fontWeight = parseInt(variant);
     const secureUrl = url.replace("http://", "https://");
     const fontStyle = variant.includes("italic") ? "italic" : "normal";
-    sources.push({
-      src: secureUrl,
-      fontWeight,
-      fontStyle
-    });
+    sources.push({ src: secureUrl, fontWeight, fontStyle });
   });
   if (sources.length > 0) {
     try {
@@ -407,18 +403,20 @@ function registerFontsFromSchema(schema) {
   var _a;
   const fonts = /* @__PURE__ */ new Set();
   function scan(nodes) {
-    var _a2;
+    var _a2, _b;
     for (const node of nodes) {
-      if ((_a2 = node.style) == null ? void 0 : _a2.fontFamily) fonts.add(node.style.fontFamily);
-      if (node.children) scan(node.children);
+      const fontFamily = (_a2 = node.style) == null ? void 0 : _a2.fontFamily;
+      if (fontFamily) {
+        fonts.add(Array.isArray(fontFamily) ? (_b = fontFamily[0]) != null ? _b : "" : fontFamily);
+      }
+      if ("children" in node) scan(node.children);
     }
   }
-  if (schema.pages) {
-    for (const page of schema.pages) {
-      if ((_a = page.settings) == null ? void 0 : _a.fontFamily) fonts.add(page.settings.fontFamily);
-      scan(page.children || []);
-    }
+  for (const page of schema.pages) {
+    if (page.settings.fontFamily) fonts.add(page.settings.fontFamily);
+    scan(page.children);
   }
+  if ((_a = schema.settings) == null ? void 0 : _a.fontFamily) fonts.add(schema.settings.fontFamily);
   fonts.forEach((f) => registerFont(f));
 }
 

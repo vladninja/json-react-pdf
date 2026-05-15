@@ -1,3 +1,5 @@
+import type { Style } from '@react-pdf/types';
+
 export type LayoutType = 'A4' | 'A5' | 'LETTER' | 'LEGAL';
 
 export type ItemKind = 'template' | 'header' | 'footer' | 'loop';
@@ -49,7 +51,7 @@ export type NodeType = 'text' | 'view' | 'image' | 'repeater' | 'background-imag
 export interface BaseNode {
   id: string;
   type: NodeType;
-  style?: Record<string, any>;
+  style?: Style;
   fixed?: boolean;
   wrap?: boolean;
 }

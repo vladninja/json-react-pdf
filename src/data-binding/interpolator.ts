@@ -6,7 +6,7 @@ import get from 'lodash.get';
  * @param context The data object to resolve variables against
  * @returns The interpolated string
  */
-export function interpolate(template: string, context: Record<string, any>): string {
+export function interpolate(template: string, context: Record<string, unknown>): string {
   if (!template || typeof template !== 'string') return template;
   
   return template.replace(/\{\{(.+?)\}\}/g, (_, path) => {
